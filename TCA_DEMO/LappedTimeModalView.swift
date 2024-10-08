@@ -14,8 +14,9 @@ struct LappedTimeModalView: View {
     var body: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
             VStack {
-                Text("Lapped Time: \(viewStore.lappedTime) seconds")
-                    .font(.largeTitle)
+                Text("Lapped Time: seconds")
+                    .foregroundStyle(Color.red)
+                    .font(.caption)
                     .padding()
 
                 Button("Delete Item") {

@@ -50,15 +50,23 @@ struct TimerAppView: View {
                 }
                 
                 Spacer()
-                List(viewStore.savedTimers, id: \.self) { item in
-                    Text("Lapped time: \(item)s")
+                List(viewStore.savedTimers) { item in
+                    Text("Lapped time: \(item.lapTime)s")
                         .font(.headline)
                         .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            viewStore.send(.lapRecordTapped(id: item.id))
+                        }
                 }
-                
             }
         }
-        
-        
+        .sheet(store: store.scope(state: \.$lappedTimeModal, action: TimerApp.Action.lappedTimeModal) ) {store in 
+            NavigationView {
+                LappedTimeModalView(store: store)
+            }
+            
+        }
     }
 }

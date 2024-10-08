@@ -5,6 +5,19 @@
 //  Created by Mouleaswar Shanmugam on 06/10/24.
 //
 import ComposableArchitecture
+import Foundation
+
+
+struct TimerRecord: Equatable, Identifiable {
+    let id: UUID
+    let lapTime: Int
+
+    init(id: UUID, lapTime: Int) {
+        self.id = id
+        self.lapTime = lapTime
+    }
+}
+
 
 struct TimerApp: Reducer {
     @Dependency(\.continuousClock) var clock
@@ -12,8 +25,8 @@ struct TimerApp: Reducer {
     struct State: Equatable {
         var isTimerRunning = false
         var secondsElapsed = 0
-        var savedTimers = [Int]()
-        @PresentationState var lappedTimeModal: PresentationState<LappedTimeModal.State>?
+        var savedTimers = IdentifiedArrayOf<TimerRecord>()
+        @PresentationState var lappedTimeModal: LappedTimeModal.State?
     }
     
     enum Action: Equatable {
@@ -21,6 +34,8 @@ struct TimerApp: Reducer {
         case stopTimerTapped
         case timerTicked
         case lapTapped(Int)
+        case lapRecordTapped(id : TimerRecord.ID)
+        case lappedTimeModal(PresentationAction<LappedTimeModal.Action>)
     }
     
     var body: some ReducerOf<TimerApp> {
@@ -45,9 +60,25 @@ struct TimerApp: Reducer {
                 return .none
                 
             case .lapTapped(let time):
-                state.savedTimers.append(time)
+                let newTimerRecord = TimerRecord(id: UUID(), lapTime: time)
+                state.savedTimers.append(newTimerRecord)
+                return .none
+            case .lapRecordTapped(let id):
+                print("adam",id)
+                print("adam", state.savedTimers[0])
+//                state.lappedTimeModal = state.savedTimers[id: id].flatMap(LappedTimeModal.State.init)
+                
+                if let selectedTimer = state.savedTimers[id: id] {
+                    let modalState = LappedTimeModal.State(lappedTime: selectedTimer.lapTime)
+                    state.lappedTimeModal =  modalState
+                }
+                return .none
+            case .lappedTimeModal:
                 return .none
             }
+        }
+        .ifLet(\.$lappedTimeModal, action: /Action.lappedTimeModal) {
+            LappedTimeModal()
         }
     }
 }

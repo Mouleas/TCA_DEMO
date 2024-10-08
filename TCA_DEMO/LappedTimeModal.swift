@@ -10,7 +10,7 @@ import ComposableArchitecture
 
 struct LappedTimeModal: Reducer {
     struct State: Equatable {
-        var lappedTime: Int
+        var lappedTime: Int?
     }
 
     enum Action: Equatable {
