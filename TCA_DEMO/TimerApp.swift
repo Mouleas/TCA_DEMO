@@ -64,10 +64,6 @@ struct TimerApp: Reducer {
                 state.savedTimers.append(newTimerRecord)
                 return .none
             case .lapRecordTapped(let id):
-                print("adam",id)
-                print("adam", state.savedTimers[0])
-//                state.lappedTimeModal = state.savedTimers[id: id].flatMap(LappedTimeModal.State.init)
-                
                 if let selectedTimer = state.savedTimers[id: id] {
                     let modalState = LappedTimeModal.State(lappedTime: selectedTimer.lapTime)
                     state.lappedTimeModal =  modalState
